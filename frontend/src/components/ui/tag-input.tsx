@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { Input } from './input';
-import { Button } from './button';
 
 interface TagInputProps {
   value: string[];
   onChange: (tags: string[]) => void;
+  placeholder?: string;
+  error?: string;
 }
 
-export function TagInput({ value, onChange }: TagInputProps) {
+export function TagInput({ value, onChange, placeholder, error }: TagInputProps) {
   const [input, setInput] = useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && input) {
+    if (e.key === 'Enter' && input.trim()) {
       e.preventDefault();
       if (!value.includes(input.trim())) {
         onChange([...value, input.trim()]);
@@ -37,7 +38,7 @@ export function TagInput({ value, onChange }: TagInputProps) {
             <button
               type="button"
               onClick={() => removeTag(tag)}
-              className="ml-1 inline-flex items-center"
+              className="ml-1 inline-flex items-center hover:text-primary/80"
             >
               <X className="h-3 w-3" />
             </button>
@@ -48,7 +49,8 @@ export function TagInput({ value, onChange }: TagInputProps) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type and press enter to add tags"
+        placeholder={placeholder}
+        error={error}
       />
     </div>
   );

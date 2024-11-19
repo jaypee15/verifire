@@ -43,4 +43,22 @@ export interface BadgeAssertion {
   revoked: boolean;
   revocationReason?: string;
   verificationId: string;
+}
+
+export interface CreateBadgeDto {
+  name: string;
+  description?: string;
+  image: string;
+  tags?: string[];
+  criteria?: {
+    narrative?: string;
+    achievementType?: string;
+  };
+  validityPeriod?: number;
+}
+
+export interface IssueBadgeDto {
+  badgeId: string;
+  recipientId: string;
+  customMessage?: string;
 } 

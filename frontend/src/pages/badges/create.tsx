@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { BadgeForm } from './components/badge-form';
 import { CreateBadgeDto } from '@/lib/types';
+import { TemplateSelector } from './components/template-selector';
 
 export function CreateBadgePage() {
   const navigate = useNavigate();

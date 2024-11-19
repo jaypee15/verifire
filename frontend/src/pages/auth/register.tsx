@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { authApi } from '@/lib/api/auth';
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
+import { Link } from 'react-router-dom';
 
 interface FormData {
   name: string;
@@ -19,7 +20,7 @@ export function RegisterPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
@@ -30,11 +31,11 @@ export function RegisterPage() {
     mutationFn: authApi.register,
     onSuccess: (data) => {
       setAuth(data.user, data.access_token);
-      navigate('/', { replace: true });
       toast({
         title: 'Welcome!',
         description: 'Your account has been created successfully.',
       });
+      navigate('/dashboard', { replace: true });
     },
     onError: (error: any) => {
       toast({

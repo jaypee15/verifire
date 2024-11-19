@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { authApi } from '@/lib/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-
+import { Link } from 'react-router-dom';
 interface FormData {
   email: string;
   password: string;
@@ -14,10 +14,9 @@ interface FormData {
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
   });
@@ -26,18 +25,17 @@ export function LoginPage() {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       setAuth(data.user, data.access_token);
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
       toast({
         title: 'Welcome back!',
         description: 'You have successfully logged in.',
       });
+      navigate('/dashboard', { replace: true });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: error.response?.data?.message || 'Failed to login',
+        title: 'Error logging in',
+        description: 'Invalid email or password',
       });
     },
   });

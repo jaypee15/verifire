@@ -1,11 +1,11 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CreateBadgeDto } from '@/lib/types';
 import { TagInput } from '@/components/ui/tag-input';
+import { CreateBadgeDto } from '@/lib/types';
 
 const badgeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -28,16 +28,16 @@ interface BadgeFormProps {
 export function BadgeForm({ onSubmit, isLoading, defaultValues }: BadgeFormProps) {
   const {
     register,
+    control,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<CreateBadgeDto>({
     resolver: zodResolver(badgeSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      tags: defaultValues?.tags || [],
+    },
   });
-
-  const tags = watch('tags') || [];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -70,10 +70,21 @@ export function BadgeForm({ onSubmit, isLoading, defaultValues }: BadgeFormProps
 
       <div className="space-y-2">
         <label>Tags</label>
-        <TagInput
-          value={tags}
-          onChange={(newTags) => setValue('tags', newTags)}
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field }) => (
+            <TagInput
+              value={field.value || []}
+              onChange={field.onChange}
+              placeholder="Add tags..."
+              error={errors.tags?.message}
+            />
+          )}
         />
+        <p className="text-sm text-muted-foreground">
+          Press enter to add a tag
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -92,6 +103,7 @@ export function BadgeForm({ onSubmit, isLoading, defaultValues }: BadgeFormProps
           id="criteria.narrative"
           {...register('criteria.narrative')}
           error={errors.criteria?.narrative?.message}
+          placeholder="Describe what is required to earn this badge..."
         />
       </div>
 
